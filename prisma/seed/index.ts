@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient as PrismaClientCtor } from "../../app/generated/prisma/client";
 import type { PrismaClient } from "../../app/generated/prisma/internal/class";
 import { PrismaPg } from "@prisma/adapter-pg";
