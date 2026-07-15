@@ -101,8 +101,8 @@ Edit `.env`:
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/system_design_learner"
 AUTH_SECRET="your-random-32-char-secret"
-ADMIN_EMAIL="admin@sdl.local"
-ADMIN_PASSWORD="admin1234"
+ADMIN_EMAIL="your-admin-email@example.com"
+ADMIN_PASSWORD="your-strong-password"
 GROQ_API_KEY="your-groq-api-key"   # free at console.groq.com
 AI_USE_GROQ_FALLBACK="true"
 ```
@@ -165,8 +165,8 @@ npm run db:push              # Push schema changes to DB
 |---|---|
 | `DATABASE_URL` | Neon connection string |
 | `AUTH_SECRET` | Random 32-char string |
-| `ADMIN_EMAIL` | Your admin email |
-| `ADMIN_PASSWORD` | Your admin password |
+| `ADMIN_EMAIL` | Your admin email (e.g. `admin@yourdomain.com`) |
+| `ADMIN_PASSWORD` | A strong password (min 8 chars) |
 | `GROQ_API_KEY` | From [console.groq.com](https://console.groq.com) |
 | `AI_USE_GROQ_FALLBACK` | `true` |
 | `NEXT_PUBLIC_APP_URL` | Your Vercel URL |
@@ -223,7 +223,7 @@ npm run db:seed:walkthroughs
 
 ## Admin Access
 
-Sign in at `/login` with your `ADMIN_EMAIL` / `ADMIN_PASSWORD`, then visit `/admin`.
+Sign in at `/login` with the `ADMIN_EMAIL` / `ADMIN_PASSWORD` you set in your `.env`, then visit `/admin`.
 
 Admin privileges:
 - Unlimited attempts on any phase
