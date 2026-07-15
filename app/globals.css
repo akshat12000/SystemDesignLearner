@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0F1117;
+  --foreground: #F1F5F9;
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+}
+
+/* ─── Light mode variable overrides ─────────────────────────────────────── */
+:root.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
+
+* { box-sizing: border-box; }
+
+/* ─── Light mode: background overrides ──────────────────────────────────── */
+.light .bg-\[\#0F1117\]           { background-color: #f8fafc !important; }
+.light .bg-\[\#0F1117\]\/80      { background-color: rgba(248,250,252,0.85) !important; }
+.light .bg-\[\#0A0C12\]          { background-color: #f1f5f9 !important; }
+.light .bg-\[\#1A1D27\]          { background-color: #ffffff !important; }
+.light .bg-\[\#1E2233\]          { background-color: #f1f5f9 !important; }
+.light .bg-\[\#2D3148\]          { background-color: #e2e8f0 !important; }
+.light .bg-\[\#2D3148\]\/60      { background-color: rgba(226,232,240,0.6) !important; }
+.light .bg-\[\#111827\]          { background-color: #ffffff !important; }
+
+/* ─── Light mode: border overrides ──────────────────────────────────────── */
+.light .border-\[\#2D3148\]      { border-color: #e2e8f0 !important; }
+.light .border-\[\#2D3148\]\/50  { border-color: rgba(226,232,240,0.5) !important; }
+.light .border-\[\#2D3148\]\/40  { border-color: rgba(226,232,240,0.4) !important; }
+.light .border-\[\#2D3148\]\/20  { border-color: rgba(226,232,240,0.2) !important; }
+
+/* ─── Light mode: text overrides ─────────────────────────────────────────  */
+.light .text-slate-100  { color: #0f172a !important; }
+.light .text-slate-200  { color: #1e293b !important; }
+.light .text-slate-300  { color: #334155 !important; }
+.light .text-slate-400  { color: #475569 !important; }
+.light .text-slate-500  { color: #64748b !important; }
+.light .text-slate-600  { color: #94a3b8 !important; }
+
+/* ─── Light mode: hover/interactive text ─────────────────────────────────  */
+.light .hover\:text-slate-200:hover { color: #0f172a !important; }
+.light .hover\:text-slate-100:hover { color: #0f172a !important; }
+.light .hover\:bg-\[\#1A1D27\]:hover { background-color: #f1f5f9 !important; }
+.light .hover\:bg-\[\#2D3148\]:hover { background-color: #e2e8f0 !important; }
+
+/* ─── Light mode: textarea/input ─────────────────────────────────────────  */
+.light textarea, .light input[type="text"],
+.light input[type="email"], .light input[type="password"] {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+.light textarea::placeholder, .light input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* ─── Light mode: sticky/backdrop nav ───────────────────────────────────── */
+.light .backdrop-blur-sm { backdrop-filter: blur(8px); }
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: #2D3148; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3D4268; }
+.light ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
