@@ -6,9 +6,25 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 const RELEASES = [
   {
-    version: "1.3.0",
+    version: "1.4.0",
     date: "2026-07-17",
     tag: "latest",
+    changes: [
+      { type: "feature", text: "Phase instructions now render full markdown — bold headings, bullet lists, inline code all properly formatted" },
+      { type: "feature", text: "API key modal redesigned with tabs (Groq / OpenAI / Gemini) — one provider visible at a time, much cleaner" },
+      { type: "feature", text: "Per-provider model selection dropdown — choose lightweight vs powerful model per provider (e.g. Gemini 2.0 Flash, GPT-4o Mini)" },
+      { type: "feature", text: "API key modal now renders as a true centered overlay via React Portal — no longer clipped by parent containers" },
+      { type: "feature", text: "Multi-provider key storage — save Groq, OpenAI, and Gemini keys independently; Groq used first when multiple are set" },
+      { type: "feature", text: "Release notes page at /changelog — visible from footer on every page" },
+      { type: "feature", text: "Footer links on every page — Release notes, Curriculum, My progress" },
+      { type: "fix", text: "Cancel button added to API key modal" },
+      { type: "fix", text: "Neon DB seeding fixed — dotenv/config now correctly loaded in all seed scripts" },
+    ],
+  },
+  {
+    version: "1.3.0",
+    date: "2026-07-17",
+    tag: null,
     changes: [
       { type: "feature", text: "Page transition loader — indigo progress bar on every navigation, no more stuck-then-jump feeling" },
       { type: "feature", text: "Feedback widget — floating button on every page, 1–5 stars + category + message, visible in admin dashboard" },

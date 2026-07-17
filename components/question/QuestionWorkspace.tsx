@@ -10,6 +10,8 @@ import { PhaseExhaustedWalkthrough } from "./PhaseExhaustedWalkthrough";
 import { CompletionModal } from "./CompletionModal";
 import { submitPhaseResponse } from "@/app/actions/evaluation";
 import { ApiKeySettings } from "@/components/shared/ApiKeySettings";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { DesignQuestion, PhaseClient } from "@/types/curriculum";
 import type { QuestionProgress } from "@/types/progress";
 import type { EvaluationResult, PhaseSubmissionState } from "@/types/evaluation";
@@ -410,9 +412,29 @@ function PhasePanel({
             </span>
           </div>
         </div>
-        <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
-          {phase.instruction}
-        </p>
+        <div className="text-sm text-slate-300 leading-relaxed prose-instruction">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+              strong: ({ children }) => <strong className="text-slate-100 font-semibold">{children}</strong>,
+              ul: ({ children }) => <ul className="space-y-1 mb-2">{children}</ul>,
+              li: ({ children }) => (
+                <li className="flex items-start gap-1.5">
+                  <span className="text-indigo-400 mt-0.5 shrink-0">-</span>
+                  <span>{children}</span>
+                </li>
+              ),
+              code: ({ children }) => (
+                <code className="bg-[#2D3148] text-indigo-300 text-xs font-mono px-1.5 py-0.5 rounded">
+                  {children}
+                </code>
+              ),
+            }}
+          >
+            {phase.instruction}
+          </ReactMarkdown>
+        </div>
         <div className="mt-3 pt-3 border-t border-[#2D3148] flex items-center justify-between">
           <span className="text-xs text-slate-500">
             Pass threshold: {phase.passThreshold}/100 · Max attempts:{" "}
