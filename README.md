@@ -52,12 +52,27 @@ This mirrors how real system design skill is built — by being forced to think 
 - `/admin` — Overview with real-time stats (users, submissions today, pass rate)
 - `/admin/evaluations` — Full evaluation log (model used, score, duration)
 - `/admin/users` — All users with XP, streak, questions completed
+- `/admin/feedback` — User feedback with ratings, categories, and average score
 - Admin account bypasses all attempt limits and phase locks (for testing)
+
+### 💬 Feedback Widget
+- Floating button on every page
+- 1–5 star rating + category (Praise / Bug / Suggestion / Content)
+- Stored in DB, visible in admin dashboard
+
+### 🔑 User API Key Support
+- Use your own **Groq**, **OpenAI**, or **Gemini** API key
+- Per-provider key + model selection (dropdown with lightweight options)
+- Stored in browser only — never in the database
+- Falls back to server key automatically if user key fails
 
 ### 🌗 Dark / Light Theme
 - Defaults to dark mode
 - Respects system preference
 - Toggle in the navbar
+
+### 📋 Release Notes
+- Public changelog at `/changelog`
 
 ---
 
@@ -65,11 +80,11 @@ This mirrors how real system design skill is built — by being forced to think 
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 14 (App Router) + TypeScript |
+| Framework | Next.js 16 (App Router) + TypeScript |
 | Styling | Tailwind CSS v4 + custom dark/light theme |
 | Database | PostgreSQL + Prisma v7 + PrismaPg adapter |
 | Auth | NextAuth v5 (Credentials — email + password) |
-| AI | Ollama (local) → Groq API (cloud fallback) |
+| AI | Ollama (local) → Groq / OpenAI / Gemini (user key or server fallback) |
 | Testing | Vitest + React Testing Library (178 tests, ~98% coverage) |
 | Deployment | Vercel + Neon PostgreSQL |
 
