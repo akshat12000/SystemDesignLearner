@@ -57,6 +57,7 @@ model User {
   submissions Submission[]
   progress    Progress[]
   stats       UserStats?
+  feedbacks   Feedback[]
 }
 
 model Account {
@@ -254,4 +255,18 @@ model UserStats {
   badges        String[]
 
   user User @relation(fields: [userId], references: [id])
+}
+
+// ─── Feedback ────────────────────────────────────────────────────────────────
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  rating    Int      // 1–5 stars
+  category  String   // "bug" | "suggestion" | "praise" | "content"
+  message   String   @db.Text
+  page      String?  // URL path where feedback was submitted
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
 }

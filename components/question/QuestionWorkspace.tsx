@@ -9,6 +9,7 @@ import { PhaseProgressBar } from "./PhaseProgressBar";
 import { PhaseExhaustedWalkthrough } from "./PhaseExhaustedWalkthrough";
 import { CompletionModal } from "./CompletionModal";
 import { submitPhaseResponse } from "@/app/actions/evaluation";
+import { ApiKeySettings } from "@/components/shared/ApiKeySettings";
 import type { DesignQuestion, PhaseClient } from "@/types/curriculum";
 import type { QuestionProgress } from "@/types/progress";
 import type { EvaluationResult, PhaseSubmissionState } from "@/types/evaluation";
@@ -79,7 +80,7 @@ export function QuestionWorkspace({
   const activePhase = question.phases.find((p) => p.order === activePhaseOrder);
 
   const handleSubmit = useCallback(
-    async (content: string) => {
+    async (content: string, userApiConfig?: { provider: string; apiKey: string; model?: string } | null) => {
       if (!activePhase) return;
 
       setPhaseStates((prev) => ({
@@ -95,7 +96,8 @@ export function QuestionWorkspace({
         const result = await submitPhaseResponse(
           question.id,
           activePhase.id,
-          content
+          content,
+          userApiConfig ?? null
         );
 
         if (!result.success || !result.evaluation) {
@@ -227,12 +229,15 @@ export function QuestionWorkspace({
                 {question.title}
               </h1>
             </div>
-            <div className="text-right shrink-0">
-              <div className="text-xs text-slate-400 mb-1">
-                Phase {completedCount}/{totalPhases} complete
-              </div>
-              <div className="text-sm font-medium text-indigo-400">
-                +{progress.totalXp} XP earned
+            <div className="text-right shrink-0 flex items-center gap-3">
+              <ApiKeySettings />
+              <div>
+                <div className="text-xs text-slate-400 mb-1">
+                  Phase {completedCount}/{totalPhases} complete
+                </div>
+                <div className="text-sm font-medium text-indigo-400">
+                  +{progress.totalXp} XP earned
+                </div>
               </div>
             </div>
           </div>

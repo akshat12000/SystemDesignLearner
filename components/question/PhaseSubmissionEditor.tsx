@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { PhaseClient } from "@/types/curriculum";
 import type { PhaseSubmissionState } from "@/types/evaluation";
 import { Loader2 } from "lucide-react";
+import { getUserApiConfig } from "@/components/shared/ApiKeySettings";
 
 interface PhaseSubmissionEditorProps {
   phase: PhaseClient;
   state: PhaseSubmissionState;
-  onSubmit: (content: string) => Promise<void>;
+  onSubmit: (content: string, userApiConfig?: { provider: string; apiKey: string; model?: string } | null) => Promise<void>;
   isCompleted: boolean;
 }
 
@@ -21,6 +22,11 @@ export function PhaseSubmissionEditor({
   isCompleted,
 }: PhaseSubmissionEditorProps) {
   const [content, setContent] = useState("");
+  const [userApiConfig, setUserApiConfig] = useState<ReturnType<typeof getUserApiConfig>>(null);
+
+  useEffect(() => {
+    setUserApiConfig(getUserApiConfig());
+  }, []);
   const isEvaluating = state.status === "evaluating";
   const hasMaxAttempts = state.attemptNumber >= phase.maxAttempts;
   const canSubmit =
@@ -31,7 +37,7 @@ export function PhaseSubmissionEditor({
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    await onSubmit(content);
+    await onSubmit(content, userApiConfig);
   };
 
   return (
@@ -73,18 +79,13 @@ export function PhaseSubmissionEditor({
       <div className="px-4 pb-4 flex items-center justify-between gap-3">
         <div className="text-xs text-slate-500">
           {hasMaxAttempts ? (
-            <span className="text-amber-500">
-              Maximum attempts reached. Review feedback above.
-            </span>
+            <span className="text-amber-500">Maximum attempts reached.</span>
           ) : isCompleted ? (
-            <span className="text-emerald-400">
-              This phase is completed. Move to the next phase.
-            </span>
+            <span className="text-emerald-400">This phase is completed.</span>
+          ) : userApiConfig ? (
+            <span className="text-emerald-400">✓ Using your {userApiConfig.provider} key</span>
           ) : (
-            <span>
-              Write your answer clearly. The AI evaluates the quality of your
-              reasoning, not just keywords.
-            </span>
+            <span>AI evaluates reasoning quality, not just keywords.</span>
           )}
         </div>
 

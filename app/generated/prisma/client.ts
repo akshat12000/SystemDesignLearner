@@ -111,3 +111,8 @@ export type Enrollment = Prisma.EnrollmentModel
  * 
  */
 export type UserStats = Prisma.UserStatsModel
+/**
+ * Model Feedback
+ * 
+ */
+export type Feedback = Prisma.FeedbackModel

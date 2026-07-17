@@ -11,6 +11,7 @@ export interface EvaluationInput {
   passThreshold: number;
   attemptNumber: number;
   useDeepModel?: boolean;
+  userApiConfig?: { provider: string; apiKey: string; model?: string };
 }
 
 export interface EvaluationOutput {
@@ -33,6 +34,27 @@ export async function runEvaluation(
   }
 
   const useGroqFallback = process.env.AI_USE_GROQ_FALLBACK === "true";
+
+  // If user provided their own API key, use it first
+  if (input.userApiConfig?.apiKey) {
+    try {
+      const { evaluateWithUserKey } = await import("./userKey");
+      const result = await evaluateWithUserKey(
+        input.systemPrompt,
+        input.studentResponse,
+        input.passThreshold,
+        input.attemptNumber,
+        input.userApiConfig
+      );
+      return {
+        result,
+        modelUsed: `user/${input.userApiConfig.provider}/${input.userApiConfig.model ?? "default"}`,
+        evaluationMs: Date.now() - start,
+      };
+    } catch (err) {
+      console.error("[evaluator] User key evaluation failed, falling back:", err);
+    }
+  }
 
   // Try Ollama first
   const ollamaAvailable = await checkOllamaHealth().catch(() => false);

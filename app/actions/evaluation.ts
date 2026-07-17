@@ -19,7 +19,8 @@ export interface SubmitPhaseResult {
 export async function submitPhaseResponse(
   questionId: string,
   phaseId: string,
-  content: string
+  content: string,
+  userApiConfig?: { provider: string; apiKey: string; model?: string } | null
 ): Promise<SubmitPhaseResult> {
   const session = await auth();
   if (!session?.user?.id) {
@@ -134,7 +135,8 @@ export async function submitPhaseResponse(
       studentResponse: trimmed,
       passThreshold: phase.passThreshold,
       attemptNumber,
-      useDeepModel: phase.order >= 4, // Use deeper model for later phases
+      useDeepModel: phase.order >= 4,
+      userApiConfig: userApiConfig ?? undefined,
     });
 
     const timeoutPromise = new Promise<never>((_, reject) =>

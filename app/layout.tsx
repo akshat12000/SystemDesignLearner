@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/shared/Footer";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import { FeedbackWidget } from "@/components/shared/FeedbackWidget";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,7 +33,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="bg-[#0F1117] text-slate-100 antialiased font-sans flex flex-col min-h-screen">
         <ThemeProvider>
+          <NextTopLoader color="#6366f1" height={3} showSpinner={false} />
           {children}
+          <FeedbackWidget />
           <Footer />
         </ThemeProvider>
       </body>
