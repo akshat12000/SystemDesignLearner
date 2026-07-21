@@ -1,150 +1,145 @@
 // What students should have covered per LLD phase — shown when attempts are exhausted.
-// Uses standard markdown so react-markdown renders it cleanly.
+// IMPORTANT: These are methodology-based walkthroughs that apply to ANY LLD question.
+// Examples used are clearly labelled as illustrative only.
 
 export const LLD_WALKTHROUGHS: Record<number, string> = {
-  1: `Here's what a complete requirements answer should have covered:
+  1: `Here's the methodology for a complete requirements phase:
 
-**Functional Requirements (must-haves):**
-- Core actions users can perform (park vehicle, exit, find available spot)
-- Different vehicle types and their spot types (motorcycle, car, truck)
-- Payment and fee calculation
-- Entry/exit flow and ticket generation
+**Functional Requirements — what to capture:**
+- List the core user actions (what the primary actor *does* with the system)
+- Identify all distinct roles/actors and their goals
+- Separate must-haves from nice-to-haves explicitly
 
-**Non-Functional Requirements:**
-- **Concurrency:** multiple vehicles entering/exiting simultaneously
-- **Availability:** the system should not go down mid-operation
-- **Scalability:** ability to add new floors/spots without redesign
-- **Performance:** fast spot lookup (O(1) or O(log n))
+**Non-Functional Requirements — never skip these:**
+- **Concurrency:** can multiple users/operations happen simultaneously?
+- **Availability:** consequences of downtime?
+- **Scalability:** will the system need to grow over time?
+- **Performance:** any latency or throughput constraints?
 
-**Actors:**
-- Driver/Vehicle (primary user)
-- Parking attendant or automated gate (system actor)
+**Always state out-of-scope items explicitly.**
+Saying "X is out of scope" shows interviewer maturity.
 
-**Out of scope you should have explicitly stated:**
-- Online reservation (unless asked)
-- Payment gateway integration details`,
+> **Example** (for a Parking Lot): Functional = park vehicle, exit, check availability. NFR = concurrent entry/exit, fast spot lookup. Out of scope = online reservation.
+> **For your question**, apply the same structure to the domain you were given.`,
 
-  2: `Here's what complete entity identification looks like:
+  2: `Here's the methodology for complete entity identification:
 
-**Core entities you needed:**
-- **ParkingLot** — top-level container (id, address, totalFloors)
-- **ParkingFloor** — one level (floorNumber, spots list)
-- **ParkingSpot** — individual spot (spotId, type: SMALL/MEDIUM/LARGE, status: AVAILABLE/OCCUPIED/RESERVED)
-- **Vehicle** — (licensePlate, vehicleType: MOTORCYCLE/CAR/TRUCK)
-- **ParkingTicket** — issued on entry (ticketId, entryTime, spot ref, vehicle ref)
-- **Payment** — (amount, paymentTime, method)
+**How to identify entities:**
+1. Read your requirements — every noun that has its own lifecycle is likely an entity
+2. Ask: "Does this thing have attributes and state?" → if yes, it's an entity
+3. Avoid "God classes" — one class should not do everything
+4. Each entity must have a **single clear responsibility**
 
-**Rules for each entity:**
-- Must have a clear single responsibility
-- Must include status/state attributes — not just IDs
-- No "God classes" that handle everything`,
+**What each entity definition must include:**
+- Name (PascalCase noun)
+- Key attributes (data it holds)
+- Status/state field where relevant (e.g. AVAILABLE, BOOKED, ACTIVE, EXPIRED)
+- Its single responsibility in one sentence
 
-  3: `Here's what complete relationship mapping looks like:
+**Red flags that cost you marks:**
+- Entity with no attributes (just an ID)
+- Missing state/status on entities that clearly have lifecycle
+- Combining two responsibilities in one class
 
-**Key relationships:**
-- ParkingLot **HAS-A composition [1:N]** ParkingFloor — floors cannot exist without the lot
-- ParkingFloor **HAS-A composition [1:N]** ParkingSpot
-- ParkingTicket **HAS-A aggregation [1:1]** ParkingSpot — ticket references spot; spot exists independently
-- ParkingTicket **HAS-A aggregation [1:1]** Vehicle
-- Payment **HAS-A [1:1]** ParkingTicket
+> **Example** (for a Parking Lot): \`ParkingSpot\` holds (spotId, type, **status**) and its responsibility is tracking whether it is available. \`ParkingTicket\` holds entry time and links a vehicle to a spot.
+> **For your question**, apply this same thinking to the domain you were given — identify its core nouns with lifecycles.`,
 
-**Cardinalities that matter:**
-- One Vehicle → at most one active ticket (but many historical)
-- One ParkingSpot → exactly one ParkingFloor
+  3: `Here's the methodology for complete relationship mapping:
 
-**Responsibility split:**
-- ParkingLot is responsible for *finding* available spots (not ParkingSpot finding itself)
-- ParkingTicket is responsible for knowing duration parked`,
+**The three relationship types you must know:**
+- **IS-A (inheritance):** "a Dog IS-A Animal" — use sparingly, prefer composition
+- **HAS-A composition:** parent *owns* the child, child cannot exist without parent
+- **HAS-A aggregation:** parent *references* the child, child can exist independently
 
-  4: `Here's what the class diagram should have looked like:
+**For each relationship, you must specify:**
+- Type (is-a / composition / aggregation / uses)
+- Cardinality: 1:1, 1:N, or N:M
+- Direction (which side owns it)
 
-\`\`\`
-class ParkingLot {
-  -floors: List<ParkingFloor>
-  +findAvailableSpot(type: VehicleType): Optional<ParkingSpot>
-  +issueTicket(vehicle: Vehicle): ParkingTicket
-  +processExit(ticket: ParkingTicket): Payment
-}
+**Responsibility assignment — what decides what:**
+The entity that *manages* the state of another is usually the one responsible for operations on it.
 
-class ParkingSpot {
-  -spotId: String
-  -type: SpotType            // enum
-  -status: SpotStatus        // enum
-  +isAvailable(): boolean
-  +reserve(): void
-  +release(): void
-}
+> **Example** (for a Parking Lot): A \`ParkingFloor\` **has-a composition [1:N]** \`ParkingSpot\` — spots can't exist without a floor. A \`ParkingTicket\` **has-a aggregation [1:1]** \`ParkingSpot\` — the ticket references a spot but the spot exists independently.
+> **For your question**, map the same relationship types between *your* question's entities.`,
 
-interface PricingStrategy {
-  +calculateFee(durationMinutes: Int): Double
-}
-\`\`\`
+  4: `Here's the methodology for a complete class diagram:
 
-**Rules violated if missing:**
-- ParkingSpot must NOT hold a direct Vehicle reference (SRP violation)
-- Pricing behind an interface — not hardcoded in ParkingLot
-- Enums for \`SpotType\` and \`SpotStatus\` — never raw strings`,
+**Every class must show:**
+- Access modifiers: \`+\` public, \`-\` private, \`#\` protected
+- Attributes with types: \`-status: BookStatus\`
+- Methods with signatures: \`+checkout(userId: String): void\`
+- Return types on all methods
 
-  5: `Here's what design pattern analysis should have covered:
+**Interfaces and abstract classes:**
+- Any behaviour that could vary across types → put behind an interface
+- Common state shared across subclasses → abstract class
 
-**Patterns that apply here and WHY:**
+**Common deductions:**
+- All attributes public → encapsulation violation
+- No interfaces defined → missed abstraction
+- Methods named as nouns instead of verbs
+- Classes with only data and no behaviour (anemic domain model)
 
-**Strategy** — pricing tiers (HourlyPricing, DailyRatePricing all implement PricingStrategy).
-Without this, you get a massive if-else chain in ParkingLot every time a new rate is added.
+> **Example** (for a Parking Lot): \`PricingStrategy\` is an interface because pricing rules vary. \`ParkingSpot\` has \`-status: SpotStatus\` (private) and \`+reserve(): boolean\` (public).
+> **For your question**, apply the same structure to your domain's classes.`,
 
-**Factory** — for creating ParkingSpots of different types (\`SpotFactory.create(SpotType)\`).
-Without this, ParkingFloor needs to know the concrete types of every spot.
+  5: `Here's the methodology for design pattern selection:
 
-**Singleton** — ParkingLot (there's one lot per deployment). But you must *justify* it — 
-don't just list it because it's common.
+**How to justify a pattern (the only acceptable format):**
+> "I used **[Pattern]** because **[specific problem it solves in THIS design]**, without it I would have **[the bad alternative]**."
 
-**Observer** — optional: notify a display board when a spot changes status.
+**Patterns most common in LLD interviews and when to use them:**
+- **Strategy** — when an algorithm or behaviour can vary (pricing, sorting, allocation)
+- **Factory / Abstract Factory** — when object creation logic is complex or type-dependent
+- **Observer** — when one change must notify multiple others without tight coupling
+- **Singleton** — when exactly one instance must exist system-wide (justify carefully!)
+- **Decorator** — when you need to add behaviour without subclassing
+- **Command** — when you need undo/redo or queued operations
 
-**SOLID alignment to mention:**
-- **OCP:** adding a new pricing tier shouldn't require modifying ParkingLot
-- **DIP:** ParkingLot depends on \`PricingStrategy\` interface, not \`HourlyPricing\` directly
-- **SRP:** ParkingSpot manages its own state; Payment handles fee logic`,
+**SOLID principles to call out:**
+- OCP: adding new behaviour without modifying existing code
+- DIP: depend on abstractions, not concrete classes
+- SRP: each class has one reason to change
 
-  6: `Here's what the code skeleton should have contained:
+> **For your question**, ask: "What behaviour varies? What needs to be extensible? What needs to be notified of changes?" — those are your pattern opportunities.`,
+
+  6: `Here's the methodology for a complete code skeleton:
+
+**What a skeleton must contain (not full implementation):**
+1. **Key interfaces** — define the contracts, not the implementations
+2. **Abstract classes** — when multiple classes share state
+3. **Method signatures** — parameters with types, return types, throws declarations
+4. **Custom domain exceptions** — one per major failure mode
+5. **Thread safety markers** — \`synchronized\`, \`volatile\`, or comment noting where locks are needed
+
+**What NOT to do:**
+- Don't write full method bodies — the point is structure, not logic
+- Don't skip exceptions — they signal you understand failure modes
+- Don't make everything \`public static\` — that's procedural, not OOP
 
 \`\`\`java
-// Key interface
-interface PricingStrategy {
-    double calculateFee(long durationMinutes);
+// Template structure (adapt to your domain)
+interface ICoreAbstraction {
+    ReturnType primaryOperation(ParamType param) throws DomainException;
 }
 
-// Core entity — note thread safety
-class ParkingSpot {
-    private final String spotId;
-    private final SpotType type;
-    private volatile SpotStatus status;
+class CoreEntity {
+    private final String id;
+    private volatile StatusEnum status; // volatile = shared across threads
 
-    public synchronized boolean reserve() {
-        if (status != SpotStatus.AVAILABLE) return false;
-        status = SpotStatus.RESERVED;
+    public synchronized boolean performStateChange() {
+        if (status != StatusEnum.VALID_STATE) return false;
+        status = StatusEnum.NEW_STATE;
         return true;
     }
-    public synchronized void release() {
-        status = SpotStatus.AVAILABLE;
-    }
 }
 
-// Domain exceptions
-class ParkingLotFullException extends RuntimeException {}
-class InvalidTicketException extends RuntimeException {}
-
-// Main service — pricing injected (DIP)
-class ParkingLot {
-    private final List<ParkingFloor> floors;
-    private final PricingStrategy pricingStrategy;
-
-    public Optional<ParkingSpot> findAvailableSpot(VehicleType type) { ... }
-    public ParkingTicket issueTicket(Vehicle v) throws ParkingLotFullException { ... }
-    public Payment processExit(ParkingTicket t) throws InvalidTicketException { ... }
+class DomainSpecificException extends RuntimeException {
+    public DomainSpecificException(String message) { super(message); }
 }
 \`\`\`
 
-**Key points shown:** \`synchronized\` for thread safety, DI for pricing, \`Optional\` return type, domain exceptions.`,
+> Adapt this template to your question's domain — rename the interface, entity, and exception to match your design.`,
 };
 
 export function getLLDWalkthrough(phaseOrder: number): string {
